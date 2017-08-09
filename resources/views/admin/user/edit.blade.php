@@ -4,7 +4,7 @@
     <!--面包屑导航 开始-->
     <div class="crumb_warp">
         <!--<i class="fa fa-bell"></i> 欢迎使用登陆网站后台，建站的首选工具。-->
-        <i class="fa fa-home"></i> <a href="#">首页</a> &raquo; <a href="#">用户管理</a> &raquo; 用户添加
+        <i class="fa fa-home"></i> <a href="#">首页</a> &raquo; <a href="#">用户管理</a> &raquo; 用户编辑
     </div>
     <!--面包屑导航 结束-->
 
@@ -42,17 +42,21 @@
     <!--结果集标题与导航组件 结束-->
     
     <div class="result_wrap">
-        <form id="user_info" action="{{ url('admin/user') }}" method="post" enctype="multipart/form-data">
+        <form id="user_info" action="{{ url('admin/user/'.$user->ad_id) }}" method="post" enctype="multipart/form-data">
             {{ csrf_field() }}
+            {{--将提交方式修改为put方式  -->{{method_field('put')}}--}}
+            <input type="hidden" name="_method" value="put">
             <table class="add_tab">
                 <tbody>
                     <tr>
                         <th width="120"><i class="require">*</i>录入职位：</th>
                         <td>
                             <select name="role_id">
-                                <option>==请选择==</option>
+                                <option value="{{ $user->role_id }}">{{ $user->post }}</option>
                                 @foreach($roles as $role)
+                                    @if($user->post != $role->post)
                                 <option value="{{ $role->role_id }}">{{ $role->post }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </td>
@@ -60,36 +64,36 @@
                     <tr>
                         <th><i class="require">*</i>用户名：</th>
                         <td>
-                            <input type="text" name="ad_name" value="">
+                            <input type="text" name="ad_name" value="{{ $user->ad_name }}">
                             <p>用户名请输入6-18位</p>
                         </td>
                     </tr>
                     <tr>
                         <th><i class="require">*</i>密 码：</th>
                         <td>
-                            <input type="password" name="ad_pass" value="111111" disabled>
-                            <input type="hidden" name="ad_time" value="{{ time() }}">
+                            <input type="password" name="ad_pass" value="{{ $user->ad_pass }}" disabled>
+                            <input type="hidden" name="ad_time" value="{{ date('Y-m-d H:i:s',$user->ad_time) }}">
                             <span><i class="fa fa-exclamation-circle yellow"></i>初始密码默认为：111111</span>
                         </td>
                     </tr>
                     <tr>
                         <th><i class="require">*</i>工 号：</th>
                         <td>
-                            <input type="text" name="ad_num">
+                            <input type="text" name="ad_num" value="{{ $user->ad_num }}">
                             <span><i class="fa fa-exclamation-circle yellow"></i>这里是默认长度-6</span>
                         </td>
                     </tr>
                     <tr>
                         <th><i class="require">*</i>电 话：</th>
                         <td>
-                            <input type="text" name="ad_phone">
-                            <span><i class="fa fa-exclamation-circle yellow"></i>请输入正确电话！！！</span>
+                            <input type="text" name="ad_phone" value="{{ $user->ad_phone }}">
+                            <span><i class="fa fa-exclamation-circle yellow"></i>！！！</span>
                         </td>
                     </tr>
                     <tr>
                         <th><i class="require">*</i>籍 贯：</th>
                         <td>
-                            <input type="text" name="ad_address">
+                            <input type="text" name="ad_address" value="{{ $user->ad_address }}">
                             <span><i class="fa fa-exclamation-circle yellow"></i>请以身份证为准！！！</span>
                             <p>xxx省xxx市</p>
                         </td>
@@ -97,16 +101,18 @@
                     <tr>
                         <th><i class="require">*</i>缩略图：</th>
                         <td>
-                            <input type="text" name="ad_photo" id="art_thumb" placeholder="显示图片路径">
+                            <input type="text" name="ad_photo" id="art_thumb" value="{{ $user->ad_photo }}">
                             <input id="pic_upload" type="file" name="pic_upload" multiple="true">
-                            <p><img id="img" title="pic" alt="上传后显示图片"></p>
+                            <p><img id="img"  title="pic" src="{{ '/'.$user->ad_photo }}" width="100" alt="上传后显示图片"></p>
                         </td>
                         <script type="text/javascript">
+
                             $(function () {
                                 $('#pic_upload').change(function () {
                                     uploadImage();
                                 });
                             });
+
                             function uploadImage() {
                                 /*1、判断是否有文件上传
                                  2、检验文件后缀名是否符合标准
@@ -122,15 +128,16 @@
                                     alert("请选择图片格式上传！");
                                     return;
                                 }
+                                /*var formData = $('input[type=file]').val();*/
                                 var formData = new FormData($('#user_info')[0]);
-                                formData.append('_token', '{{csrf_token()}}');
-                                {{-- console.log(formData);--}}
+                                formData.append('_token', '{{ csrf_token() }}');
+                                console.log(formData);
                                 $.ajax({
                                     url: "/admin/upload",
                                     data: formData,
                                     /*dataType:'json',我传的不是json数据*/
                                     type: "POST",
-                                    async: false,
+                                    async: true,
                                     cache: false,
                                     contentType: false,
                                     processData: false,
@@ -149,34 +156,13 @@
 
                         </script>
 
+
                     </tr>
                     <tr>
                         <th></th>
                         <td>
                             <input type="submit" value="提交">
                             <input type="button" class="back" onclick="history.go(-1)" value="返回">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><i class="require">*</i>内 容：</th>
-                        <td>
-                            <script type="text/javascript" charset="utf-8" src="{{asset('ueditor/ueditor.config.js')}}"></script>
-                            <script type="text/javascript" charset="utf-8" src="{{asset('ueditor/ueditor.all.min.js')}}"> </script>
-                            <script type="text/javascript" charset="utf-8" src="{{asset('ueditor/lang/zh-cn/zh-cn.js')}}"></script>
-                            <script id="editor" type="text/plain" style="width:800px;height:300px;"></script>
-                            <script type="text/javascript">
-
-                                //实例化编辑器
-                                //建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
-                                var ue = UE.getEditor('editor');
-                            </script>
-
-                            <style>
-                                .edui-default{line-height: 28px;}
-                                div.edui-combox-body,div.edui-button-body,div.edui-splitbutton-body
-                                {overflow: hidden; height:20px;}
-                                div.edui-box{overflow: hidden; height:22px;}
-                            </style>
                         </td>
                     </tr>
                 </tbody>

@@ -44,5 +44,6 @@ Route::group(['prefix'=>'admin','namespace'=>'Admin','middleware'=>'login.admin'
     Route::resource('user','UserController');
 //  上传头像的逻辑处理
     Route::post('upload','UserController@picUpload');
+    Route::put('upload','UserController@picUpload');
 });
 
