@@ -30,7 +30,7 @@ Route::get('admin/crypt','Admin\LoginController@crypt');
 //后台路由组 prefix-url前缀  namespace命名空间 middleware中间件
 Route::group(['prefix'=>'admin','namespace'=>'Admin','middleware'=>'login.admin'],
     function(){
-    //后天登录首页 业务逻辑
+//  后天登录首页 业务逻辑
     Route::get('index','IndexController@index');
     Route::get('info','IndexController@info');
 //  退出后台
@@ -45,5 +45,18 @@ Route::group(['prefix'=>'admin','namespace'=>'Admin','middleware'=>'login.admin'
 //  上传头像的逻辑处理
     Route::post('upload','UserController@picUpload');
     Route::put('upload','UserController@picUpload');
-});
 
+//  商品管理业务逻辑
+    Route::resource('cars','CarsController');
+    Route::post('sort','CarsController@sort');
+    Route::post('cars','CarsController@picUpload');
+    Route::put('cars','CarsController@picUpload');
+});
+//前台业务逻辑组
+//前台首页
+Route::get('home/index','Home\IndexController@index');
+Route::group(['prefix'=>'home','namespace'=>'Home'],
+    function(){
+
+
+});

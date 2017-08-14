@@ -4,7 +4,7 @@
     <!--面包屑导航 开始-->
     <div class="crumb_warp">
         <!--<i class="fa fa-bell"></i> 欢迎使用登陆网站后台，建站的首选工具。-->
-        <i class="fa fa-home"></i> <a href="#">首页</a> &raquo; <a href="#">用户管理</a> &raquo; 用户添加
+        <i class="fa fa-home"></i> <a href="{{ url('admin/index') }}" target="_parent">首页</a> &raquo; <a href="#">用户管理</a> &raquo; 用户添加
     </div>
     <!--面包屑导航 结束-->
 
@@ -139,7 +139,6 @@
                                         alert("上传成功");
                                         $('#img').attr({src:'/'+data,width:"100"});
                                         $('#art_thumb').val(data);
-
                                     },
                                     error: function(XMLHttpRequest, textStatus, errorThrown) {
                                         alert("上传失败，请检查网络后重试");

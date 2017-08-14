@@ -20,6 +20,7 @@ class IndexController extends Controller
     {
 //      $user = User::->first();
 //      dd(session('user'));
+//      $server = $_SERVER;
         return view('admin.index',[]);
     }
     //  加载右侧显示页面
